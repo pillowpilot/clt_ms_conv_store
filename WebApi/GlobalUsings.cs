@@ -1,0 +1,13 @@
+﻿global using MongoDB.Driver;
+global using WebApi.Options;
+global using Microsoft.Extensions.Options;
+global using WebApi.Services;
+global using MongoDB.Bson.Serialization.Conventions;
+global using MassTransit;
+global using System.Reflection;
+global using WebApi.Configuration;
+global using MongoDB.Bson.Serialization.Attributes;
+global using MongoDB.Bson;
+global using WebApi.Schemas;
+global using WebApi.Integration.Common;
+global using WebApi.Schemas.Logs;
