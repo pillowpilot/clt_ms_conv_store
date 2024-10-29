@@ -1,4 +1,6 @@
-﻿namespace WebApi.Configuration;
+﻿using WebApi.Integration.Commands.OpenTicket;
+
+namespace WebApi.Configuration;
 
 public static class RabbitMQConfiguration
 {
@@ -14,6 +16,7 @@ public static class RabbitMQConfiguration
                     host.Username(messageBroker.Username);
                     host.Password(messageBroker.Password);
                 });
+
                 rabbitConfig.ConfigureEndpoints(context);
             });
 

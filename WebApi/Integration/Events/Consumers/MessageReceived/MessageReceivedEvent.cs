@@ -1,10 +1,13 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+﻿namespace WebApi.Integration.Events.Consumers.MessageReceived;
 
-namespace WebApi.Integration.Events.Consumers.MessageReceived;
-
-public class MessageReceivedEvent : BaseEvent
+public class MessageReceivedEvent : IBaseEvent
 {
+    public string type { get; set; } = default!;
+
+    public string uuid { get; set; } = default!;
+
+    public DateTime timestamp { get; set; }
+
     public string sender { get; set; } = default!;
 
     public string receiver { get; set; } = default!;

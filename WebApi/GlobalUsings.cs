@@ -11,3 +11,4 @@ global using MongoDB.Bson;
 global using WebApi.Schemas;
 global using WebApi.Integration.Common;
 global using WebApi.Schemas.Logs;
+global using WebApi.Constants;

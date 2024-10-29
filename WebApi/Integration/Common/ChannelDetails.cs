@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace WebApi.Integration.Common;
+﻿namespace WebApi.Integration.Common;
 
 public class ChannelDetails
 {

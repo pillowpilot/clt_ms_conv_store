@@ -1,6 +1,4 @@
-﻿using WebApi.Schemas.Logs;
-
-namespace WebApi.Schemas;
+﻿namespace WebApi.Schemas;
 
 public class Conversation
 {
@@ -10,6 +8,9 @@ public class Conversation
     public string? codigo_cliente { get; private set; }
     public string active_channel { get; private set; }
     public string source_id { get; private set; }
+
+    [BsonRepresentation(BsonType.String)]
+    public ConversationState state { get; private set; } = ConversationState.Open;
     public UserDetails? user_details { get; private set; }
     public List<Log> logs { get; set; } = [];
 
