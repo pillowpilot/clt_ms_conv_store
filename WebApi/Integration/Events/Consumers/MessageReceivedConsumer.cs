@@ -42,7 +42,7 @@ public class MessageReceivedEventConsumer(MongoDBService mongo, IPublishEndpoint
         var conversation = new Conversation(@event.channel, @event.source_id, userDetails?.codigo_cliente, userDetails, whatsAppMessage);
         await mongo.Conversations.InsertOneAsync(conversation);
 
-        var command = OpenTicketCommand.Create(conversation.id, conversation.user_details);
+        var command = OpenTicketCommand.Create(conversation.id, conversation.source_id, conversation.active_channel, conversation.user_details);
         await publishEndpoint.Publish(command);
     }
 

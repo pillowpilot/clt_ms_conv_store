@@ -5,10 +5,12 @@ public class OpenTicketCommand : IBaseEvent
     public string type { get; set; } = default!;
     public string uuid { get; set; } = default!;
     public DateTime timestamp { get; set; }
-    public Guid? conversation_id { get; set; }
+    public Guid conversation_id { get; set; }
+    public string source_id { get; set; } = default!;
+    public string channel { get; set; } = default!;
     public UserDetails? user_details { get; set; }
 
-    public static OpenTicketCommand Create(Guid conversationId, UserDetails? userDetails)
+    public static OpenTicketCommand Create(Guid conversationId, string sourceId, string channel, UserDetails? userDetails)
     {
         return new OpenTicketCommand
         {
@@ -16,6 +18,8 @@ public class OpenTicketCommand : IBaseEvent
             uuid = Guid.NewGuid().ToString(),
             timestamp = DateTime.Now,
             conversation_id = conversationId,
+            source_id = sourceId,
+            channel = channel,
             user_details = userDetails
         };
     }
