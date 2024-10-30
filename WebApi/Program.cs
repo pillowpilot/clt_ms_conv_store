@@ -1,4 +1,4 @@
-using WebApi.Integration.Events.Consumers.MessageReceived;
+//using WebApi.Integration.Events.Consumers.MessageReceived;
 
 var builder = WebApplication.CreateBuilder(args);
 

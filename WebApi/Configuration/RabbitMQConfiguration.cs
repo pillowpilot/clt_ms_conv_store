@@ -1,6 +1,4 @@
-﻿using WebApi.Integration.Commands.OpenTicket;
-
-namespace WebApi.Configuration;
+﻿namespace WebApi.Configuration;
 
 public static class RabbitMQConfiguration
 {
@@ -8,9 +6,12 @@ public static class RabbitMQConfiguration
     {
         return services.AddMassTransit(busConfig =>
         {
+            busConfig.SetKebabCaseEndpointNameFormatter();
+
             busConfig.UsingRabbitMq((context, rabbitConfig) =>
             {
-                var messageBroker = context.GetRequiredService<IOptions<MessageBroker>>().Value;
+                var messageBroker = configuration.GetSection(nameof(MessageBroker)).Get<MessageBroker>()!;
+
                 rabbitConfig.Host(new Uri(messageBroker.Host), host =>
                 {
                     host.Username(messageBroker.Username);
@@ -20,7 +21,6 @@ public static class RabbitMQConfiguration
                 rabbitConfig.ConfigureEndpoints(context);
             });
 
-            busConfig.SetKebabCaseEndpointNameFormatter();
             busConfig.AddConsumers(Assembly.GetExecutingAssembly());
         });
     }
