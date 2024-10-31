@@ -1,6 +1,8 @@
-﻿namespace WebApi.Integration.Events.Consumers;
+﻿using WebApi.Extensions;
 
-public class MessageReceivedEventConsumer(MongoDBService mongo, IPublishEndpoint publishEndpoint) : IConsumer<MessageReceivedEvent>
+namespace WebApi.Integration.Events.Consumers;
+
+public class MessageReceivedEventConsumer(MongoDBService mongo, ISendEndpointProvider endpointProvider) : IConsumer<MessageReceivedEvent>
 {
     public async Task Consume(ConsumeContext<MessageReceivedEvent> context)
     {
@@ -31,9 +33,6 @@ public class MessageReceivedEventConsumer(MongoDBService mongo, IPublishEndpoint
         {
             await HandleExistingConversation(conversation, filter, whatsAppMessage);
         }
-
-        //ASK: una vez guardado un message receive, ya sea para crear una conversacion nueva, o agregar nuevo log a uno existente, el crm
-        //como sabe que hay un mensaje para mostrar, el conv-store tiene que disparar un evento aca mismo?
     }
 
     //Crear nueva conversacion y enviar comando para crear un ticket con dicha conversacion
@@ -43,7 +42,7 @@ public class MessageReceivedEventConsumer(MongoDBService mongo, IPublishEndpoint
         await mongo.Conversations.InsertOneAsync(conversation);
 
         var command = OpenTicketCommand.Create(conversation.id, conversation.source_id, conversation.active_channel, conversation.user_details);
-        await publishEndpoint.Publish(command);
+        await endpointProvider.Send(nameof(OpenTicketCommand), command);
     }
 
     //Agregar nuevo log de mensaje a la conversacion

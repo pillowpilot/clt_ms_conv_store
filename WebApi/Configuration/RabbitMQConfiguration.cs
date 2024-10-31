@@ -1,4 +1,7 @@
-﻿namespace WebApi.Configuration;
+﻿using System.Net.Mime;
+using WebApi.Integration.Events.Consumers;
+
+namespace WebApi.Configuration;
 
 public static class RabbitMQConfiguration
 {
@@ -6,8 +9,6 @@ public static class RabbitMQConfiguration
     {
         return services.AddMassTransit(busConfig =>
         {
-            busConfig.SetKebabCaseEndpointNameFormatter();
-
             busConfig.UsingRabbitMq((context, rabbitConfig) =>
             {
                 var messageBroker = configuration.GetSection(nameof(MessageBroker)).Get<MessageBroker>()!;
@@ -18,10 +19,39 @@ public static class RabbitMQConfiguration
                     host.Password(messageBroker.Password);
                 });
 
-                rabbitConfig.ConfigureEndpoints(context);
+                //Ignorar todas las serializacion y utilizar solo RawJson
+                rabbitConfig.ClearSerialization();
+                rabbitConfig.UseRawJsonSerializer();
+
+                rabbitConfig.AddQueues(context);
             });
 
-            busConfig.AddConsumers(Assembly.GetExecutingAssembly());
+            busConfig.AddConsumers();
         });
+    }
+
+    //Configurar los queues de sus respectivos consumers
+    private static void AddQueues(this IRabbitMqBusFactoryConfigurator rabbitConfig, IBusRegistrationContext context)
+    {
+        rabbitConfig.ReceiveEndpoint(nameof(MessageReceivedEvent), ConfigureEndpoint(context, typeof(MessageReceivedEventConsumer)));
+    }
+
+    //Registrar los consumers a utilizar
+    private static void AddConsumers(this IBusRegistrationConfigurator busConfig)
+    {
+        busConfig.AddConsumer<MessageReceivedEventConsumer>();
+    }
+
+    //Metodo para aplicar una configuracion generica a todos los consumers
+    private static Action<IRabbitMqReceiveEndpointConfigurator> ConfigureEndpoint(IBusRegistrationContext context, Type consumer)
+    {
+        return endpointConfig =>
+        {
+            endpointConfig.ConfigureConsumeTopology = false;
+            endpointConfig.ClearSerialization();
+            endpointConfig.UseRawJsonSerializer();
+            endpointConfig.DefaultContentType = new ContentType("application/json");
+            endpointConfig.ConfigureConsumer(context, consumer);
+        };
     }
 }
