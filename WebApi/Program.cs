@@ -7,6 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
 builder.Services.AddApi(configuration)
                 .AddMongoDB(configuration)
                 .AddRabbitMQ(configuration);

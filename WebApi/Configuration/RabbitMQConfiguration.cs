@@ -1,4 +1,5 @@
 ﻿using System.Net.Mime;
+using ConvCrmContracts.Conv.Querys;
 using WebApi.Integration.Events.Consumers;
 
 namespace WebApi.Configuration;
@@ -34,12 +35,16 @@ public static class RabbitMQConfiguration
     private static void AddQueues(this IRabbitMqBusFactoryConfigurator rabbitConfig, IBusRegistrationContext context)
     {
         rabbitConfig.ReceiveEndpoint(nameof(MessageReceivedEvent), ConfigureEndpoint(context, typeof(MessageReceivedEventConsumer)));
+        rabbitConfig.ReceiveEndpoint(nameof(MessageReceivedNoClientEvent), ConfigureEndpoint(context, typeof(MessageReceivedConsumerNoClient)));
+        rabbitConfig.ReceiveEndpoint(nameof(GetConversationQuery), ConfigureEndpoint(context, typeof(GetConversationConsumer)));
     }
 
     //Registrar los consumers a utilizar
     private static void AddConsumers(this IBusRegistrationConfigurator busConfig)
     {
         busConfig.AddConsumer<MessageReceivedEventConsumer>();
+        busConfig.AddConsumer<MessageReceivedConsumerNoClient>();
+        busConfig.AddConsumer<GetConversationConsumer>();
     }
 
     //Metodo para aplicar una configuracion generica a todos los consumers

@@ -1,12 +1,12 @@
 ﻿namespace WebApi.Schemas;
 
-public class Conversation
+public class ConversationClients
 {
     [BsonId]
     [BsonRepresentation(BsonType.String)]
     public Guid id { get; private set; }
     public string? codigo_cliente { get; private set; }
-    public string active_channel { get; private set; }
+    public string? active_channel { get; private set; }
     public string source_id { get; private set; }
 
     [BsonRepresentation(BsonType.String)]
@@ -14,7 +14,7 @@ public class Conversation
     public UserDetails? user_details { get; private set; }
     public List<Log> logs { get; set; } = [];
 
-    public Conversation(string activeChannel, string sourceId, string? codigoCliente, UserDetails? userDetails, Log log)
+    public ConversationClients(string? activeChannel, string sourceId, string? codigoCliente, UserDetails? userDetails, Log log)
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(codigoCliente);
         ArgumentNullException.ThrowIfNull(userDetails);
@@ -27,7 +27,7 @@ public class Conversation
         logs.Add(log);
     }
 
-    public Conversation(string activeChannel, string sourceId, Log log)
+    public ConversationClients(string activeChannel, string sourceId, Log log)
     {
         id = Guid.NewGuid();
         active_channel = activeChannel;
