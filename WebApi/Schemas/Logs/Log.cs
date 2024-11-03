@@ -1,4 +1,4 @@
-﻿namespace WebApi.Schemas.Logs;
+﻿﻿namespace WebApi.Schemas.Logs;
 
 [BsonDiscriminator(RootClass = true)]
 [BsonKnownTypes(typeof(AgentTextLog), typeof(AssignmentLog), typeof(CommentLog), typeof(TicketStateLog), typeof(WhatsAppTextLog))]

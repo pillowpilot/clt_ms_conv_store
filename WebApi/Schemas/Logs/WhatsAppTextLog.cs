@@ -6,4 +6,3 @@ public class WhatsAppTextLog(string fallbackText, WhatsAppSender sender, DateTim
     public WhatsAppSender sender { get; private set; } = sender;
 }
 
-

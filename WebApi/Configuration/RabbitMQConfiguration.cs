@@ -8,34 +8,36 @@ public static class RabbitMQConfiguration
 {
     public static IServiceCollection AddRabbitMQ(this IServiceCollection services, IConfiguration configuration)
     {
-        return services.AddMassTransit(busConfig =>
-        {
-            busConfig.UsingRabbitMq((context, rabbitConfig) =>
-            {
-                var messageBroker = configuration.GetSection(nameof(MessageBroker)).Get<MessageBroker>()!;
+        services.AddMassTransit(busConfig =>
+       {
+           busConfig.UsingRabbitMq((context, rabbitConfig) =>
+           {
+               var messageBroker = configuration.GetSection(nameof(MessageBroker)).Get<MessageBroker>()!;
 
-                rabbitConfig.Host(new Uri(messageBroker.Host), host =>
-                {
-                    host.Username(messageBroker.Username);
-                    host.Password(messageBroker.Password);
-                });
+               rabbitConfig.Host(new Uri(messageBroker.Host), host =>
+               {
+                   host.Username(messageBroker.Username);
+                   host.Password(messageBroker.Password);
+               });
 
-                //Ignorar todas las serializacion y utilizar solo RawJson
-                rabbitConfig.ClearSerialization();
-                rabbitConfig.UseRawJsonSerializer();
+               //Ignorar todas las serializacion y utilizar solo RawJson
+               rabbitConfig.ClearSerialization();
+               rabbitConfig.UseRawJsonSerializer();
 
-                rabbitConfig.AddQueues(context);
-            });
+               rabbitConfig.AddQueues(context);
+           });
 
-            busConfig.AddConsumers();
-        });
+           busConfig.AddConsumers();
+       });
+        services.AddScoped<MessagePublisherService>();
+        return services;
     }
 
     //Configurar los queues de sus respectivos consumers
     private static void AddQueues(this IRabbitMqBusFactoryConfigurator rabbitConfig, IBusRegistrationContext context)
     {
-        rabbitConfig.ReceiveEndpoint(nameof(MessageReceivedEvent), ConfigureEndpoint(context, typeof(MessageReceivedEventConsumer)));
-        rabbitConfig.ReceiveEndpoint(nameof(MessageReceivedNoClientEvent), ConfigureEndpoint(context, typeof(MessageReceivedConsumerNoClient)));
+        rabbitConfig.ReceiveEndpoint("WABATextMsgUserInfo", ConfigureEndpoint(context, typeof(MessageReceivedEventConsumer)));
+        rabbitConfig.ReceiveEndpoint("WABATextMsg", ConfigureEndpoint(context, typeof(MessageReceivedConsumerNoClient)));
         rabbitConfig.ReceiveEndpoint(nameof(GetConversationQuery), ConfigureEndpoint(context, typeof(GetConversationConsumer)));
     }
 
