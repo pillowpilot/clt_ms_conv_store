@@ -3,7 +3,8 @@ using WebApi.Extensions;
 
 namespace WebApi.Integration.Events.Consumers;
 
-public class MessageReceivedEventConsumer(MongoDBService mongo, ISendEndpointProvider endpointProvider, ILogger<MessageReceivedEventConsumer> logger) : IConsumer<MessageReceivedEvent>
+public class MessageReceivedEventConsumer(MongoDBService mongo, ISendEndpointProvider endpointProvider,
+ ILogger<MessageReceivedEventConsumer> logger, MessagePublisherService messagePublisherService) : IConsumer<MessageReceivedEvent>
 {
     public async Task Consume(ConsumeContext<MessageReceivedEvent> context)
     {
@@ -33,11 +34,15 @@ public class MessageReceivedEventConsumer(MongoDBService mongo, ISendEndpointPro
         {
             logger.LogInformation("No se encontró una conversación. Creando una nueva...");
             await HandleNewConversation(@event, userDetails, whatsAppMessage);
+            await messagePublisherService.SendMessageAsync(whatsAppMessage, "AIMessage");
+            logger.LogInformation("Conversación enviada al agente IA.");
         }
         else
         {
             logger.LogInformation("Conversación existente encontrada. Agregando mensaje al log...");
             await HandleExistingConversation(conversation, filter, whatsAppMessage);
+            await messagePublisherService.SendMessageAsync(whatsAppMessage, "AIMessageHist");
+            logger.LogInformation("Conversación enviada al agente IA.");
         }
     }
 

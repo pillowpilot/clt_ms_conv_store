@@ -34,6 +34,8 @@ public class MessageReceivedConsumerNoClient(MongoDBService mongo,
         {
             logger.LogInformation("No se encontró una conversación. Creando una nueva...");
             await HandleNewConversation(@event, whatsAppMessage);
+            await messagePublisher.SendMessageAsync(whatsAppMessage, "solucion");
+            logger.LogInformation("Conversación enviada al agente IA.");
         }
         else
         {
