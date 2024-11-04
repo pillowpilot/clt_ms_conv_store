@@ -20,12 +20,10 @@ public class WABATextMsgWithUserInfoConsumer(MongoDBService mongo, ISendEndpoint
         var whatsAppMessage = new WhatsAppTextLog(@event.body, sender, @event.timestamp);
 
         //Filtro para buscar conversacion por el source_id y en estado abierto
-        //var filter = Builders<IdentifiedCustomer>.Filter.And(
-        //    Builders<IdentifiedCustomer>.Filter.Eq(conv => conv.source_id, @event.source_id),
-        //    Builders<IdentifiedCustomer>.Filter.Eq(conv => conv.manage_by, ManageBy.Open)
-        //);
-
-        var filter = Builders<IdentifiedCustomer>.Filter.Eq(conv => conv.source_id, @event.source_id);
+        var filter = Builders<IdentifiedCustomer>.Filter.Or(
+            Builders<IdentifiedCustomer>.Filter.Eq(conv => conv.source_id, @event.sender),
+            Builders<IdentifiedCustomer>.Filter.Eq(conv => conv.user_details!.codigo_cliente, @event.user_details?.codigo_cliente ?? "cod_not_found")
+        );
 
         //Recuperar conversacion, si existe, agregar nuevo log, sino, crear conversacion nueva
         var conversation = await mongo.IdentifiedCustomers.Find(filter).FirstOrDefaultAsync();
@@ -49,7 +47,7 @@ public class WABATextMsgWithUserInfoConsumer(MongoDBService mongo, ISendEndpoint
         {
             logger.LogInformation("Conversación existente encontrada. Agregando mensaje al log...");
 
-            await HandleExistingConversation(conversation, filter, whatsAppMessage);
+            await HandleExistingConversation(filter, whatsAppMessage);
 
             if (conversation.manage_by is ManageBy.AIAgent)
             {
@@ -75,7 +73,7 @@ public class WABATextMsgWithUserInfoConsumer(MongoDBService mongo, ISendEndpoint
     {
         try
         {
-            var conversation = new IdentifiedCustomer(@event.source_id, userDetails?.codigo_cliente, userDetails, whatsAppMessage);
+            var conversation = new IdentifiedCustomer(@event.sender, userDetails?.codigo_cliente, userDetails, whatsAppMessage);
 
             await mongo.IdentifiedCustomers.InsertOneAsync(conversation);
 
@@ -89,9 +87,9 @@ public class WABATextMsgWithUserInfoConsumer(MongoDBService mongo, ISendEndpoint
     }
 
     //Agregar nuevo log de mensaje a la conversacion
-    private async Task HandleExistingConversation(IdentifiedCustomer conversation, FilterDefinition<IdentifiedCustomer> filter, WhatsAppTextLog whatsAppMessage)
+    private async Task HandleExistingConversation(FilterDefinition<IdentifiedCustomer> filter, WhatsAppTextLog whatsAppMessage)
     {
-        var filterUpdate = Builders<IdentifiedCustomer>.Update.Set(conv => conv.logs, [.. conversation.logs, whatsAppMessage]);
+        var filterUpdate = Builders<IdentifiedCustomer>.Update.Push(conv => conv.logs, whatsAppMessage);
         try
         {
             await mongo.IdentifiedCustomers.UpdateOneAsync(filter, filterUpdate);
