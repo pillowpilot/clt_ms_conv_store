@@ -1,9 +1,4 @@
-﻿using System.Text.Json;
-using WebApi.Enums;
-using WebApi.Extensions;
-using static MassTransit.Monitoring.Performance.BuiltInCounters;
-
-namespace WebApi.Integration.Events.Consumers;
+﻿namespace WebApi.Integration.Events.Consumers;
 
 public class WABATextMsgWithUserInfoConsumer(MongoDBService mongo, ISendEndpointProvider endpointProvider,
     ILogger<WABATextMsgWithUserInfoConsumer> logger, MessagePublisherService messagePublisherService)
@@ -80,7 +75,7 @@ public class WABATextMsgWithUserInfoConsumer(MongoDBService mongo, ISendEndpoint
     {
         try
         {
-            var conversation = new IdentifiedCustomer(@event.channel, @event.source_id, userDetails?.codigo_cliente, userDetails, whatsAppMessage);
+            var conversation = new IdentifiedCustomer(@event.source_id, userDetails?.codigo_cliente, userDetails, whatsAppMessage);
 
             await mongo.IdentifiedCustomers.InsertOneAsync(conversation);
 

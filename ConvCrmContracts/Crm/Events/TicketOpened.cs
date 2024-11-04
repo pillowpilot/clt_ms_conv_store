@@ -2,9 +2,9 @@
 
 public class TicketOpened : IBaseEvent
 {
-    public string type { get; set; } = default!;
-    public string uuid { get; set; } = default!;
+    public Guid uuid { get; set; }
     public DateTime timestamp { get; set; }
-    public string ticket_id { get; set; } = default!;
-    public string conversation_id { get; set; } = default!;
+    public long ticket_number { get; set; }
+    public Guid conversation_id { get; set; }
+    public AuthorizedBy authorized_by { get; set; }
 }

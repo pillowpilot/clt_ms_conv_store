@@ -4,8 +4,12 @@ namespace WebApi.Enums;
 
 public enum ManageBy
 {
-    [Description("ai agent")]
     AIAgent,
-    [Description("agent")]
     Agent
+}
+
+public enum Channel
+{
+    WhatsApp,
+    Web
 }

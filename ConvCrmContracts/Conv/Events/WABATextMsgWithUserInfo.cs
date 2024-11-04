@@ -4,7 +4,7 @@ public class WABATextMsgWithUserInfo : IBaseEvent
 {
     public string type { get; set; } = default!;
 
-    public string uuid { get; set; } = default!;
+    public Guid uuid { get; set; }
 
     public DateTime timestamp { get; set; }
 

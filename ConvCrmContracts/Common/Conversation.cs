@@ -1,11 +1,11 @@
 ﻿public class Conversation
 {
-    public string uuid { get; set; } = default!;
+    public Guid uuid { get; set; }
     public string message { get; set; }
 
     public Conversation(Guid id, string message)
     {
-        uuid = id.ToString();
+        uuid = id;
         this.message = message;
     }
 }

@@ -1,7 +1,3 @@
-using System.Text.Json;
-using WebApi.Enums;
-using WebApi.Extensions;
-
 namespace WebApi.Integration.Events.Consumers;
 
 public class WABATextMsgConsumer(MongoDBService mongo,

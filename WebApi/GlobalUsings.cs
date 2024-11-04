@@ -15,3 +15,5 @@ global using ConvCrmContracts.Crm.Events;
 global using ConvCrmContracts.Conv.Events;
 global using ConvCrmContracts.Common;
 global using ConvCrmContracts.Conv.Commands;
+global using WebApi.Extensions;
+global using MassTransit.Clients;

@@ -37,17 +37,33 @@ public static class RabbitMQConfiguration
     //Configurar los queues de sus respectivos consumers
     private static void AddQueues(this IRabbitMqBusFactoryConfigurator rabbitConfig, IBusRegistrationContext context)
     {
-        rabbitConfig.ReceiveEndpoint(nameof(WABATextMsgWithUserInfo), ConfigureEndpoint(context, typeof(WABATextMsgWithUserInfoConsumer)));
-        rabbitConfig.ReceiveEndpoint(nameof(WABATextMsg), ConfigureEndpoint(context, typeof(WABATextMsgConsumer)));
+        rabbitConfig.ReceiveEndpoint(nameof(AgentAnswerGenerated), ConfigureEndpoint(context, typeof(AgentAnswerGeneratedConsumer)));
+        rabbitConfig.ReceiveEndpoint(nameof(AgentAssigned), ConfigureEndpoint(context, typeof(AgentAssignedConsumer)));
+        rabbitConfig.ReceiveEndpoint(nameof(AIAnswerGenerated), ConfigureEndpoint(context, typeof(AIAnswerGeneratedConsumer)));
+        rabbitConfig.ReceiveEndpoint(nameof(AIAnswerGeneratedWithUserInfo), ConfigureEndpoint(context, typeof(AIAnswerGeneratedWithUserInfoConsumer)));
+        rabbitConfig.ReceiveEndpoint(nameof(TicketClosed), ConfigureEndpoint(context, typeof(TicketClosedConsumer)));
+        rabbitConfig.ReceiveEndpoint(nameof(TicketCommentAdded), ConfigureEndpoint(context, typeof(TicketCommentAddedConsumer)));
+        rabbitConfig.ReceiveEndpoint(nameof(TicketOpened), ConfigureEndpoint(context, typeof(TicketOpenedConsumer)));
+        rabbitConfig.ReceiveEndpoint(nameof(TicketStateChanged), ConfigureEndpoint(context, typeof(TicketStateChangedConsumer)));
         rabbitConfig.ReceiveEndpoint(nameof(GetConversationQuery), ConfigureEndpoint(context, typeof(GetConversationConsumer)));
+        rabbitConfig.ReceiveEndpoint(nameof(WABATextMsg), ConfigureEndpoint(context, typeof(WABATextMsgConsumer)));
+        rabbitConfig.ReceiveEndpoint(nameof(WABATextMsgWithUserInfo), ConfigureEndpoint(context, typeof(WABATextMsgWithUserInfoConsumer)));
     }
 
     //Registrar los consumers a utilizar
     private static void AddConsumers(this IBusRegistrationConfigurator busConfig)
     {
-        busConfig.AddConsumer<WABATextMsgWithUserInfoConsumer>();
-        busConfig.AddConsumer<WABATextMsgConsumer>();
+        busConfig.AddConsumer<AgentAnswerGeneratedConsumer>();
+        busConfig.AddConsumer<AgentAssignedConsumer>();
+        busConfig.AddConsumer<AIAnswerGeneratedConsumer>();
+        busConfig.AddConsumer<AIAnswerGeneratedWithUserInfoConsumer>();
+        busConfig.AddConsumer<TicketClosedConsumer>();
+        busConfig.AddConsumer<TicketCommentAddedConsumer>();
+        busConfig.AddConsumer<TicketOpenedConsumer>();
+        busConfig.AddConsumer<TicketStateChangedConsumer>();
         busConfig.AddConsumer<GetConversationConsumer>();
+        busConfig.AddConsumer<WABATextMsgConsumer>();
+        busConfig.AddConsumer<WABATextMsgWithUserInfoConsumer>();
     }
 
     //Metodo para aplicar una configuracion generica a todos los consumers

@@ -2,5 +2,6 @@
 
 public class AuthorizedBy
 {
-    public string agent_id { get; set; } = default!;
+    public int agent_id { get; set; }
+    public string agent_name { get; set; } = default!;
 }
