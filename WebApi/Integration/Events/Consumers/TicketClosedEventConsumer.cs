@@ -1,8 +1,8 @@
 ﻿namespace WebApi.Integration.Events.Consumers;
 
-public class TicketClosedEventConsumer : IConsumer<TicketClosedEvent>
+public class TicketClosedEventConsumer : IConsumer<TicketClosed>
 {
-    public Task Consume(ConsumeContext<TicketClosedEvent> context)
+    public Task Consume(ConsumeContext<TicketClosed> context)
     {
         throw new NotImplementedException();
     }

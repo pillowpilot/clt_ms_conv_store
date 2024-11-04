@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ConvCrmContracts.Conv.Events
 {
-    public class MessageReceivedNoClientEvent : IBaseEvent
+    public class WABATextMsg : IBaseEvent
     {
         public string type { get; set; } = default!;
 
@@ -19,7 +19,7 @@ namespace ConvCrmContracts.Conv.Events
 
         public string body { get; set; } = default!;
 
-        public string? source_id { get; set; } = default!;
+        public string source_id { get; set; } = default!;
 
         public string message_id { get; set; } = default!;
 

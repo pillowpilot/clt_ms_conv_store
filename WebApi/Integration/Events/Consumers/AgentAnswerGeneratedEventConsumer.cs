@@ -1,8 +1,8 @@
 ﻿namespace WebApi.Integration.Events.Consumers;
 
-public class AgentAnswerGeneratedEventConsumer : IConsumer<AgentAnswerGeneratedEvent>
+public class AgentAnswerGeneratedEventConsumer : IConsumer<AgentAnswerGenerated>
 {
-    public Task Consume(ConsumeContext<AgentAnswerGeneratedEvent> context)
+    public Task Consume(ConsumeContext<AgentAnswerGenerated> context)
     {
         throw new NotImplementedException();
     }

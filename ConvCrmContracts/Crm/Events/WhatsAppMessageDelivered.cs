@@ -1,6 +1,6 @@
 ﻿namespace ConvCrmContracts.Crm.Events;
 
-public class WhatsAppMessageDeliveredEvent : IBaseEvent
+public class WhatsAppMessageDelivered : IBaseEvent
 {
     public string type { get; set; } = default!;
     public string uuid { get; set; } = default!;

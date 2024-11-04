@@ -1,10 +1,12 @@
 ﻿namespace ConvCrmContracts.Crm.Events;
 
-public class TicketOpenedEvent : IBaseEvent
+public class AgentAnswerGenerated : IBaseEvent
 {
     public string type { get; set; } = default!;
     public string uuid { get; set; } = default!;
     public DateTime timestamp { get; set; }
-    public string ticket_id { get; set; } = default!;
+    public string agent_id { get; set; } = default!;
+    public AgentDetails agent_details { get; set; } = new();
     public string conversation_id { get; set; } = default!;
+    public string body { get; set; } = default!;
 }

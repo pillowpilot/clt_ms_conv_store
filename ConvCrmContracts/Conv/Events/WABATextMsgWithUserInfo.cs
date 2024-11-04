@@ -1,6 +1,6 @@
 ﻿namespace ConvCrmContracts.Conv.Events;
 
-public class MessageReceivedEvent : IBaseEvent
+public class WABATextMsgWithUserInfo : IBaseEvent
 {
     public string type { get; set; } = default!;
 

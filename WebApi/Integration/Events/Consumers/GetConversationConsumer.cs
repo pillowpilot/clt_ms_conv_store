@@ -15,14 +15,14 @@ namespace WebApi.Integration.Events.Consumers
             logger.LogInformation("El id a consultar es: {Message}", @event.source_id);
             logger.LogInformation("Fecha Inicio: {inicio}", @event.start_timestamp);
             logger.LogInformation("Fecha Fin: {fin}", @event.end_timestamp);
-            var filtroSourceId = Builders<ConversationNoClients>.Filter.Eq(conv => conv.source_id, @event.source_id);
+            var filtroSourceId = Builders<AnonymousCustomer>.Filter.Eq(conv => conv.source_id, @event.source_id);
 
-            var filtroFechaLogs = Builders<ConversationNoClients>.Filter.ElemMatch(
+            var filtroFechaLogs = Builders<AnonymousCustomer>.Filter.ElemMatch(
                 conv => conv.logs,
                 log => log.timestamp >= @event.start_timestamp && log.timestamp <= @event.end_timestamp);
-            var filtro = Builders<ConversationNoClients>.Filter.And(filtroSourceId);
+            var filtro = Builders<AnonymousCustomer>.Filter.And(filtroSourceId);
 
-            var resultado = await mongo.ConversationsNoClients.Find(filtro).ToListAsync();
+            var resultado = await mongo.AnonymousCustomers.Find(filtro).ToListAsync();
             logger.LogInformation("Resultado de la consulta: {Resultado}", JsonSerializer.Serialize(resultado, new JsonSerializerOptions { WriteIndented = true }));
         }
     }

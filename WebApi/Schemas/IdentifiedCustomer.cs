@@ -1,6 +1,8 @@
-﻿namespace WebApi.Schemas;
+﻿using WebApi.Enums;
 
-public class ConversationClients
+namespace WebApi.Schemas;
+
+public class IdentifiedCustomer
 {
     [BsonId]
     [BsonRepresentation(BsonType.String)]
@@ -10,11 +12,11 @@ public class ConversationClients
     public string source_id { get; private set; }
 
     [BsonRepresentation(BsonType.String)]
-    public ConversationState state { get; private set; } = ConversationState.Open;
+    public ManageBy manage_by { get; private set; } = ManageBy.AIAgent;
     public UserDetails? user_details { get; private set; }
     public List<Log> logs { get; set; } = [];
 
-    public ConversationClients(string? activeChannel, string sourceId, string? codigoCliente, UserDetails? userDetails, Log log)
+    public IdentifiedCustomer(string? activeChannel, string sourceId, string? codigoCliente, UserDetails? userDetails, Log log)
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(codigoCliente);
         ArgumentNullException.ThrowIfNull(userDetails);
@@ -27,7 +29,7 @@ public class ConversationClients
         logs.Add(log);
     }
 
-    public ConversationClients(string activeChannel, string sourceId, Log log)
+    public IdentifiedCustomer(string activeChannel, string sourceId, Log log)
     {
         id = Guid.NewGuid();
         active_channel = activeChannel;

@@ -1,8 +1,8 @@
 ﻿namespace WebApi.Integration.Events.Consumers;
 
-public class AgentAssignedEventConsumer : IConsumer<AgentAssignedEvent>
+public class AgentAssignedEventConsumer : IConsumer<AgentAssigned>
 {
-    public Task Consume(ConsumeContext<AgentAssignedEvent> context)
+    public Task Consume(ConsumeContext<AgentAssigned> context)
     {
         throw new NotImplementedException();
     }

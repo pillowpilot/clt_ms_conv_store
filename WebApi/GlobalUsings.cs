@@ -10,7 +10,7 @@ global using MongoDB.Bson.Serialization.Attributes;
 global using MongoDB.Bson;
 global using WebApi.Schemas;
 global using WebApi.Schemas.Logs;
-global using WebApi.Constants;
+global using WebApi.Enums;
 global using ConvCrmContracts.Crm.Events;
 global using ConvCrmContracts.Conv.Events;
 global using ConvCrmContracts.Common;

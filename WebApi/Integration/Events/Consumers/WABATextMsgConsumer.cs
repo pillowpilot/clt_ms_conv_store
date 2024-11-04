@@ -1,15 +1,17 @@
 using System.Text.Json;
+using WebApi.Enums;
 using WebApi.Extensions;
 
 namespace WebApi.Integration.Events.Consumers;
 
-public class MessageReceivedConsumerNoClient(MongoDBService mongo,
- ILogger<MessageReceivedConsumerNoClient> logger, MessagePublisherService messagePublisher) : IConsumer<MessageReceivedNoClientEvent>
+public class WABATextMsgConsumer(MongoDBService mongo,
+ ILogger<WABATextMsgConsumer> logger, MessagePublisherService messagePublisher) : IConsumer<WABATextMsg>
 {
-    public async Task Consume(ConsumeContext<MessageReceivedNoClientEvent> context)
+    public async Task Consume(ConsumeContext<WABATextMsg> context)
     {
         logger.LogInformation("Escuchando mensajes en RabbitMQ...");
         var @event = context.Message;
+
         logger.LogInformation("Mensaje recibido: {Message}", @event.body);
         var fallbackText = @event.body;
 
@@ -22,13 +24,13 @@ public class MessageReceivedConsumerNoClient(MongoDBService mongo,
         var whatsAppMessage = new WhatsAppTextLog(@event.body, sender, @event.timestamp);
 
         //Filtro para buscar conversacion por el source_id y en estado abierto
-        var filter = Builders<ConversationNoClients>.Filter.And(
-            Builders<ConversationNoClients>.Filter.Eq(conv => conv.source_id, @event.source_id),
-            Builders<ConversationNoClients>.Filter.Eq(conv => conv.state, ConversationState.Open)
+        var filter = Builders<AnonymousCustomer>.Filter.And(
+            Builders<AnonymousCustomer>.Filter.Eq(conv => conv.source_id, @event.source_id),
+            Builders<AnonymousCustomer>.Filter.Eq(conv => conv.manage_by, ManageBy.AIAgent)
         );
 
         //Recuperar conversacion, si existe, agregar nuevo log, sino, crear conversacion nueva
-        var conversation = await mongo.ConversationsNoClients.Find(filter).FirstOrDefaultAsync();
+        var conversation = await mongo.AnonymousCustomers.Find(filter).FirstOrDefaultAsync();
 
         if (conversation is null)
         {
@@ -47,12 +49,12 @@ public class MessageReceivedConsumerNoClient(MongoDBService mongo,
     }
 
     //Crear nueva conversacion y enviar comando para crear un ticket con dicha conversacion
-    private async Task HandleNewConversation(MessageReceivedNoClientEvent @event, WhatsAppTextLog whatsAppMessage)
+    private async Task HandleNewConversation(WABATextMsg @event, WhatsAppTextLog whatsAppMessage)
     {
-        var conversation = new ConversationNoClients(@event.source_id, whatsAppMessage);
+        var conversation = new AnonymousCustomer(@event.source_id, whatsAppMessage);
         try
         {
-            await mongo.ConversationsNoClients.InsertOneAsync(conversation);
+            await mongo.AnonymousCustomers.InsertOneAsync(conversation);
             logger.LogInformation("Inserto correctamente...");
         }
         catch (Exception ex)
@@ -62,12 +64,12 @@ public class MessageReceivedConsumerNoClient(MongoDBService mongo,
     }
 
     //Agregar nuevo log de mensaje a la conversacion
-    private async Task HandleExistingConversation(ConversationNoClients conversation, FilterDefinition<ConversationNoClients> filter, WhatsAppTextLog whatsAppMessage)
+    private async Task HandleExistingConversation(AnonymousCustomer conversation, FilterDefinition<AnonymousCustomer> filter, WhatsAppTextLog whatsAppMessage)
     {
-        var filterUpdate = Builders<ConversationNoClients>.Update.Set(conv => conv.logs, [.. conversation.logs, whatsAppMessage]);
+        var filterUpdate = Builders<AnonymousCustomer>.Update.Set(conv => conv.logs, [.. conversation.logs, whatsAppMessage]);
         try
         {
-            await mongo.ConversationsNoClients.UpdateOneAsync(filter, filterUpdate);
+            await mongo.AnonymousCustomers.UpdateOneAsync(filter, filterUpdate);
         }
         catch (Exception ex)
         {

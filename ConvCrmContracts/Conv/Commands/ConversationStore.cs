@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ConvCrmContracts.Conv.Commands
 {
-    public class GenerateAIAnswerCommand
+    public class ConversationStore
     {
         
     }

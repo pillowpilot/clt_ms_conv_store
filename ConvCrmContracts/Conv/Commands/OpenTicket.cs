@@ -1,6 +1,6 @@
 ﻿namespace ConvCrmContracts.Conv.Commands;
 
-public class OpenTicketCommand : IBaseEvent
+public class OpenTicket : IBaseEvent
 {
     public string type { get; set; } = default!;
     public string uuid { get; set; } = default!;
@@ -10,9 +10,9 @@ public class OpenTicketCommand : IBaseEvent
     public string channel { get; set; } = default!;
     public UserDetails? user_details { get; set; }
 
-    public static OpenTicketCommand Create(Guid conversationId, string sourceId, string channel, UserDetails? userDetails)
+    public static OpenTicket Create(Guid conversationId, string sourceId, string channel, UserDetails? userDetails)
     {
-        return new OpenTicketCommand
+        return new OpenTicket
         {
             type = "v0.conv.open_ticket",
             uuid = Guid.NewGuid().ToString(),

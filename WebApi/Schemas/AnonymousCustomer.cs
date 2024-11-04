@@ -1,6 +1,8 @@
-﻿namespace WebApi.Schemas;
+﻿using WebApi.Enums;
 
-public class ConversationNoClients
+namespace WebApi.Schemas;
+
+public class AnonymousCustomer
 {
     [BsonId]
     [BsonRepresentation(BsonType.String)]
@@ -8,17 +10,17 @@ public class ConversationNoClients
     public string source_id { get; private set; }
 
     [BsonRepresentation(BsonType.String)]
-    public ConversationState state { get; private set; } = ConversationState.Open;
+    public ManageBy manage_by { get; private set; } = ManageBy.AIAgent;
     public List<Log> logs { get; set; } = [];
 
-    public ConversationNoClients(string sourceId, Log log)
+    public AnonymousCustomer(string sourceId, Log log)
     {
         id = Guid.NewGuid();
         source_id = sourceId;
         logs.Add(log);
     }
 
-    public ConversationNoClients(string activeChannel, string sourceId, Log log)
+    public AnonymousCustomer(string activeChannel, string sourceId, Log log)
     {
         id = Guid.NewGuid();
         source_id = sourceId;
