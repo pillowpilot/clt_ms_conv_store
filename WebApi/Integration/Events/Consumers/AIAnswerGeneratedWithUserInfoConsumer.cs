@@ -1,6 +1,9 @@
-﻿namespace WebApi.Integration.Events.Consumers;
+﻿using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
-public class AIAnswerGeneratedWithUserInfoConsumer(MongoDBService mongo, ISendEndpointProvider endpointProvider, IRequestClient<TicketCreated> requestClient) : IConsumer<AIAnswerGeneratedWithUserInfo>
+namespace WebApi.Integration.Events.Consumers;
+
+public class AIAnswerGeneratedWithUserInfoConsumer(MongoDBService mongo, ISendEndpointProvider endpointProvider, IBus bus, ILogger<AIAnswerGeneratedWithUserInfoConsumer> logger) : IConsumer<AIAnswerGeneratedWithUserInfo>
 {
     public async Task Consume(ConsumeContext<AIAnswerGeneratedWithUserInfo> context)
     {
@@ -21,15 +24,9 @@ public class AIAnswerGeneratedWithUserInfoConsumer(MongoDBService mongo, ISendEn
         if (@event.open_ticket)
         {
             var command = new OpenTicket(@event.uuid, conversation.source_id, Channel.WhatsApp.ToString(), conversation.user_details);
-            //await endpointProvider.Send(nameof(OpenTicket), command);
-            var ticketCreated = await requestClient.GetResponse<TicketCreated>(command);
+            await endpointProvider.Send(nameof(OpenTicket), command);
 
-            //Log de pending
-            var ticketStateLog = new TicketStateLog(ticketCreated.Message.ticket_number, new AgentSender("BOT"));
-
-            var filterManagedBy = Builders<IdentifiedCustomer>.Update
-                .Set(conv => conv.manage_by, ManageBy.Agent)
-                .Push(x => x.logs, ticketStateLog);
+            var filterManagedBy = Builders<IdentifiedCustomer>.Update.Set(conv => conv.manage_by, ManageBy.Agent);
 
             await mongo.IdentifiedCustomers.UpdateOneAsync(filter, filterManagedBy);
         }
