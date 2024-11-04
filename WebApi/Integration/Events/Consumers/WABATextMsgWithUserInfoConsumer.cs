@@ -41,13 +41,14 @@ public class WABATextMsgWithUserInfoConsumer(MongoDBService mongo, ISendEndpoint
 
             var newConversation = await HandleNewConversation(@event, userDetails, whatsAppMessage);
 
-            //await messagePublisherService.SendMessageAsync(whatsAppMessage, "AIMessage");
+            if (newConversation is null) return;
 
             //Crear comando y enviar para generacion de respuesta de la IA
+            //await messagePublisherService.SendMessageAsync(whatsAppMessage, "AIMessage");
             var command = new GenerateAIAnswerWithUserInfo(newConversation.id, whatsAppMessage.timestamp, userDetails, BuildMessage(newConversation.id, whatsAppMessage));
             await endpointProvider.Send(nameof(GenerateAIAnswerWithUserInfo), command);
 
-            logger.LogInformation("Conversación enviada al agente IA.");
+            logger.LogInformation("Comando enviada al agente IA.");
         }
         else
         {
@@ -62,37 +63,34 @@ public class WABATextMsgWithUserInfoConsumer(MongoDBService mongo, ISendEndpoint
                 var command = new GenerateAIAnswerWithUserInfo(conversation.id, whatsAppMessage.timestamp, userDetails, BuildMessage(conversation.id, whatsAppMessage));
                 await endpointProvider.Send(nameof(GenerateAIAnswerWithUserInfo), command);
 
-                logger.LogInformation("Conversación enviada al agente IA.");
+                logger.LogInformation("Comando enviada al agente IA.");
             }
             else //Enviar al agente
             {
                 var command = new GenerateAgentAnswerWithUserInfo(conversation.id, whatsAppMessage.timestamp, userDetails, BuildMessage(conversation.id, whatsAppMessage));
                 await endpointProvider.Send(nameof(GenerateAgentAnswerWithUserInfo), command);
 
-                logger.LogInformation("Conversación enviada al agente.");
+                logger.LogInformation("Comando enviada al agente.");
             }
         }
     }
 
     //Crear nueva conversacion y enviar comando para crear un ticket con dicha conversacion
-    private async Task<IdentifiedCustomer> HandleNewConversation(WABATextMsgWithUserInfo @event, UserDetails? userDetails, WhatsAppTextLog whatsAppMessage)
+    private async Task<IdentifiedCustomer?> HandleNewConversation(WABATextMsgWithUserInfo @event, UserDetails? userDetails, WhatsAppTextLog whatsAppMessage)
     {
-        var conversation = new IdentifiedCustomer(@event.channel, @event.source_id, userDetails?.codigo_cliente, userDetails, whatsAppMessage);
+        try
+        {
+            var conversation = new IdentifiedCustomer(@event.channel, @event.source_id, userDetails?.codigo_cliente, userDetails, whatsAppMessage);
 
-        await mongo.IdentifiedCustomers.InsertOneAsync(conversation);
+            await mongo.IdentifiedCustomers.InsertOneAsync(conversation);
 
-        return conversation;
-        
-        //try
-        //{
-        //}
-        //catch (Exception ex)
-        //{
-        //    logger.LogError("Error al insertar en MongoDB: {Error}", ex.Message);
-        //}
-
-        //var command = OpenTicketCommand.Create(conversation.id, conversation.source_id, conversation.active_channel, conversation.user_details);
-        //await endpointProvider.Send(nameof(OpenTicketCommand), command);
+            return conversation;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("Error al insertar en MongoDB: {Error}", ex.Message);
+            return null;
+        }
     }
 
     //Agregar nuevo log de mensaje a la conversacion
