@@ -9,7 +9,8 @@ public static class MongoDBConfiguration
 
         return services.AddSingleton(serviceProvider =>
         {
-            var database = serviceProvider.GetRequiredService<IOptions<Database>>().Value;
+            //var database = serviceProvider.GetRequiredService<IOptions<Database>>().Value;
+            var database = configuration.GetSection(nameof(Database)).Get<Database>()!;
             return new MongoDBService(database.ConnectionString, database.Name);
         });
     }
