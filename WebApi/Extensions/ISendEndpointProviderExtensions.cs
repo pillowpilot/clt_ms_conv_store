@@ -1,7 +1,4 @@
-﻿using MassTransit;
-using WebApi.Enums;
-
-namespace WebApi.Extensions;
+﻿namespace WebApi.Extensions;
 
 public static class ISendEndpointProviderExtensions
 {
@@ -13,4 +10,3 @@ public static class ISendEndpointProviderExtensions
         await endpoint.Send(payload);
     }
 }
-

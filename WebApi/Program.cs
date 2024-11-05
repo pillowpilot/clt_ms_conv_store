@@ -1,7 +1,10 @@
-//using WebApi.Integration.Events.Consumers.MessageReceived;
-
+using ConvCrmContracts.Conv.Querys;
 using MassTransit;
+using MassTransit.Clients;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading;
 using WebApi.Extensions;
+using WebApi.Integration.Events.Consumers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +29,13 @@ app.MapPost($"/{nameof(WABATextMsgWithUserInfo)}", async (WABATextMsgWithUserInf
 {
     await sendEndpointProvider.Send(nameof(WABATextMsgWithUserInfo), request);
     return Results.Ok("Evento publicado");
+});
+
+
+app.MapPost($"/get-conversation", async ([FromBody] GetConversation request, IBus _bus) =>
+{
+    var message = await _bus.GetResponse<GetConversation, ConversationDocument>(nameof(GetConversation), request);
+    return message;
 });
 
 app.Run();

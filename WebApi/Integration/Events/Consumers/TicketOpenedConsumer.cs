@@ -7,7 +7,7 @@ public class TicketOpenedConsumer(MongoDBService mongo) : IConsumer<TicketOpened
         var @event = context.Message;
 
         var sender = new AgentSender(@event.authorized_by.agent_name, @event.authorized_by.agent_id.ToString());
-        var ticketStateLog = new TicketStateLog(@event.ticket_number, sender, "open");
+        var ticketStateLog = new TicketStateLog(@event.ticket_id, sender, @event.timestamp, "open");
 
         var filterIdentified = Builders<IdentifiedCustomer>.Filter.Eq(conv => conv.id, @event.conversation_id);
         var filterAnonymous = Builders<AnonymousCustomer>.Filter.Eq(conv => conv.id, @event.conversation_id);

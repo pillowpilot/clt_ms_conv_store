@@ -1,5 +1,5 @@
-﻿using System.Net.Mime;
-using ConvCrmContracts.Conv.Querys;
+﻿using ConvCrmContracts.Conv.Querys;
+using System.Net.Mime;
 using WebApi.Integration.Events.Consumers;
 
 namespace WebApi.Configuration;
@@ -45,9 +45,10 @@ public static class RabbitMQConfiguration
         rabbitConfig.ReceiveEndpoint(nameof(TicketCommentAdded), ConfigureEndpoint(context, typeof(TicketCommentAddedConsumer)));
         rabbitConfig.ReceiveEndpoint(nameof(TicketOpened), ConfigureEndpoint(context, typeof(TicketOpenedConsumer)));
         rabbitConfig.ReceiveEndpoint(nameof(TicketStateChanged), ConfigureEndpoint(context, typeof(TicketStateChangedConsumer)));
-        rabbitConfig.ReceiveEndpoint(nameof(GetConversationQuery), ConfigureEndpoint(context, typeof(GetConversationConsumer)));
+        rabbitConfig.ReceiveEndpoint(nameof(GetConversation), ConfigureEndpoint(context, typeof(GetConversationConsumer)));
         rabbitConfig.ReceiveEndpoint(nameof(WABATextMsg), ConfigureEndpoint(context, typeof(WABATextMsgConsumer)));
         rabbitConfig.ReceiveEndpoint(nameof(WABATextMsgWithUserInfo), ConfigureEndpoint(context, typeof(WABATextMsgWithUserInfoConsumer)));
+
     }
 
     //Registrar los consumers a utilizar

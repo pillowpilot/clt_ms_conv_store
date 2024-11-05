@@ -1,7 +1,7 @@
 ﻿namespace WebApi.Integration.Events.Consumers;
 
 public class WABATextMsgWithUserInfoConsumer(MongoDBService mongo, ISendEndpointProvider endpointProvider,
-    ILogger<WABATextMsgWithUserInfoConsumer> logger, MessagePublisherService messagePublisherService)
+    ILogger<WABATextMsgWithUserInfoConsumer> logger)
     : IConsumer<WABATextMsgWithUserInfo>
 {
     public async Task Consume(ConsumeContext<WABATextMsgWithUserInfo> context)
@@ -73,7 +73,7 @@ public class WABATextMsgWithUserInfoConsumer(MongoDBService mongo, ISendEndpoint
     {
         try
         {
-            var conversation = new IdentifiedCustomer(@event.sender, userDetails?.codigo_cliente, userDetails, whatsAppMessage);
+            var conversation = new IdentifiedCustomer(@event.sender, userDetails!.codigo_cliente, userDetails, whatsAppMessage);
 
             await mongo.IdentifiedCustomers.InsertOneAsync(conversation);
 

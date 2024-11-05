@@ -7,7 +7,7 @@ public class IdentifiedCustomer
     [BsonId]
     [BsonRepresentation(BsonType.String)]
     public Guid id { get; private set; }
-    public string? codigo_cliente { get; private set; }
+    public string codigo_cliente { get; private set; }
 
     [BsonRepresentation(BsonType.String)]
     public Channel active_channel { get; private set; }
@@ -18,7 +18,7 @@ public class IdentifiedCustomer
     public UserDetails? user_details { get; private set; }
     public List<Log> logs { get; set; } = [];
 
-    public IdentifiedCustomer(string sourceId, string? codigoCliente, UserDetails? userDetails, Log log, Channel activeChannel = Channel.WhatsApp)
+    public IdentifiedCustomer(string sourceId, string codigoCliente, UserDetails? userDetails, Log log, Channel activeChannel = Channel.WhatsApp)
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(codigoCliente);
         ArgumentNullException.ThrowIfNull(userDetails);

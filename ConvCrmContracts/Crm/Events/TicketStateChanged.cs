@@ -6,7 +6,7 @@ public class TicketStateChanged : IBaseEvent
     public Guid uuid { get; set; }
     public DateTime timestamp { get; set; }
     public Guid conversation_id { get; set; }
-    public long ticket_number { get; set; }
+    public int ticket_number { get; set; }
     public string new_state { get; set; } = default!;
     public AuthorizedBy authorized_by { get; set; } = new();
 }

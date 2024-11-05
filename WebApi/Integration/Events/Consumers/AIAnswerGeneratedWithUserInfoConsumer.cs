@@ -24,9 +24,14 @@ public class AIAnswerGeneratedWithUserInfoConsumer(MongoDBService mongo, ISendEn
         if (@event.open_ticket)
         {
             var command = new OpenTicket(@event.uuid, conversation.source_id, Channel.WhatsApp.ToString(), conversation.user_details);
-            await endpointProvider.Send(nameof(OpenTicket), command);
+             var ticketCreated = await bus.GetResponse<OpenTicket, TicketCreated>(nameof(OpenTicket), command);
 
-            var filterManagedBy = Builders<IdentifiedCustomer>.Update.Set(conv => conv.manage_by, ManageBy.Agent);
+            //Log de pending
+            var ticketStateLog = new TicketStateLog(ticketCreated.ticket_id, new AgentSender("BOT"), ticketCreated.timestamp);
+
+            var filterManagedBy = Builders<IdentifiedCustomer>.Update
+                .Set(conv => conv.manage_by, ManageBy.Agent)
+                .Push(x => x.logs, ticketStateLog);
 
             await mongo.IdentifiedCustomers.UpdateOneAsync(filter, filterManagedBy);
         }

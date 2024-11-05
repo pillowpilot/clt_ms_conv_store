@@ -1,8 +1,8 @@
 ﻿namespace WebApi.Schemas.Logs;
 
-public class TicketStateLog(long ticketNumber, AgentSender authorizedBy, string newState = "pending") : Log("state")
+public class TicketStateLog(int ticketId, AgentSender authorizedBy, DateTime timestamp, string newState = "pending") : Log(Guid.NewGuid(), timestamp)
 {
-    public long ticket_number { get; set; } = ticketNumber;
+    public int ticket_id { get; set; } = ticketId;
     public string new_state { get; set; } = newState;
     public AgentSender authorized_by { get; private set; } = authorizedBy;
 }

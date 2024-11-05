@@ -1,6 +1,8 @@
-﻿namespace WebApi.Integration.Events.Consumers;
+﻿using WebApi.Extensions;
 
-public class AIAnswerGeneratedConsumer(MongoDBService mongo, ISendEndpointProvider endpointProvider, IRequestClient<TicketCreated> requestClient) : IConsumer<AIAnswerGenerated>
+namespace WebApi.Integration.Events.Consumers;
+
+public class AIAnswerGeneratedConsumer(MongoDBService mongo, ISendEndpointProvider endpointProvider, IBus bus) : IConsumer<AIAnswerGenerated>
 {
     public async Task Consume(ConsumeContext<AIAnswerGenerated> context)
     {
@@ -21,11 +23,11 @@ public class AIAnswerGeneratedConsumer(MongoDBService mongo, ISendEndpointProvid
         if (@event.open_ticket)
         {
             var command = new OpenTicket(@event.uuid, conversation.source_id, Channel.WhatsApp.ToString(), null);
-            //await endpointProvider.Send(nameof(OpenTicket), command);
-            var ticketCreated = await requestClient.GetResponse<TicketCreated>(command);
+            
+            var ticketCreated = await bus.GetResponse<OpenTicket, TicketCreated>(nameof(OpenTicket), command);
 
             //Log de pending
-            var ticketStateLog = new TicketStateLog(ticketCreated.Message.ticket_number, new AgentSender("BOT"));
+            var ticketStateLog = new TicketStateLog(ticketCreated.ticket_id, new AgentSender("BOT"), ticketCreated.timestamp);
 
             var filterManagedBy = Builders<AnonymousCustomer>.Update
                 .Set(conv => conv.manage_by, ManageBy.Agent)
